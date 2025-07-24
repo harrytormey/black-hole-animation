@@ -1,7 +1,16 @@
 # Black Hole Spacetime Visualization - Complete Implementation Spec
 
 ## Project Overview
-Create a 60-90 second animated Manim video demonstrating how black holes curve spacetime and cause orbital motion. This spec provides complete step-by-step instructions for recreating the project from scratch.
+Create a 60-90 second animated Manim video demonstrating how black holes curve spacetime and cause orbital motion. This implementation recreates the professional black hole visualization inspired by educational physics videos, featuring:
+
+- **Black background** with **bold, readable text**
+- **Blue wireframe spacetime grid** that warps dynamically
+- **Smaller blue wireframe black hole** with **deeper spacetime curvature**
+- **Orange wireframe event horizon** positioned behind text
+- **Realistic orbital motion** with multiple white particles using Kepler's laws
+- **Progressive animation sequence** building each concept step-by-step
+
+This spec provides complete step-by-step instructions for recreating the project from scratch.
 
 ## Prerequisites & Setup
 
@@ -281,20 +290,45 @@ def outro(self):
 - Curved surfaces: 30x30 resolution for smoothness
 - Spheres: Vary resolution based on size and importance
 
-### 3. Mathematical Warping Function
+### 3. Mathematical Warping Function (Enhanced)
 ```python
 def warped_surface(u, v):
     r_squared = u**2 + v**2
-    warp_factor = 3 / (1 + r_squared/2)  # Prevents division by zero
-    z = -warp_factor * np.exp(-r_squared/8)  # Smooth exponential decay
+    # Much deeper warping effect for dramatic visualization
+    warp_factor = 6 / (1 + r_squared/2)  # Increased from 3 to 6
+    z = -warp_factor * np.exp(-r_squared/4)  # Deeper curve (4 instead of 8)
     return np.array([u, v, z])
 ```
 
-### 4. Camera and Animation Timing
-- Initial camera: `phi=75°, theta=30°`
+### 4. Realistic Orbital Physics
+```python
+def create_orbit_updater(radius, initial_angle):
+    def orbit_updater(mob, dt):
+        # Kepler's laws approximation (closer orbits = faster)
+        speed = 1.5 / np.sqrt(radius)
+        current_pos = mob.get_center()
+        angle = np.arctan2(current_pos[1], current_pos[0])
+        angle += dt * speed
+        z = current_pos[2]
+        # Add slight wobble for realistic motion
+        wobble = 0.05 * np.sin(angle * 3)
+        new_radius = radius + wobble
+        mob.move_to([new_radius * np.cos(angle), new_radius * np.sin(angle), z])
+    return orbit_updater
+```
+
+### 4. Visual Design Specifications
+- **Background**: `self.camera.background_color = BLACK`
+- **Camera**: Initial position `phi=65°, theta=-30°`
+- **Grid**: Reduced resolution (15x15 flat, 20x20 warped) with thicker strokes (2.0)
+- **Black hole**: Smaller radius (0.6) positioned deeper (z=-1.8)
+- **Text**: All labels use `weight=BOLD` and larger font sizes (28-48px)
+- **Event horizon**: Positioned at z=-1.2 (behind black hole label)
+
+### 5. Camera and Animation Timing
 - Use `self.move_camera()` instead of `self.camera.frame.animate` in ThreeDScene
 - Smooth transitions: 2-3 seconds
-- Orbital motion: 4 seconds minimum
+- Orbital motion: 5 seconds with realistic physics
 - Total duration: ~60-90 seconds
 
 ## Common Troubleshooting

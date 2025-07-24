@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew install:*)",
+      "Bash(uv pip install:*)",
+      "Bash(manim:*)",
+      "Bash(python -m manim:*)",
+      "Bash(python3:*)",
+      "Bash(uv run:*)"
+    ],
+    "deny": []
+  }
+}
